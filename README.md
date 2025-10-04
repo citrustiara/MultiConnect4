@@ -73,15 +73,9 @@ The AI evaluates positions based on:
 
 ## Local Development
 
-Clone the repository and open `index.html` in a web browser:
+Clone the repository and open `index.html` in a web browser
 
-```bash
-git clone https://github.com/yourusername/multi-connect4.git
-cd multi-connect4
-# Open index.html in your browser
-```
-
-No build process or dependencies required - it's pure vanilla JavaScript!
+No build process or dependencies required.
 
 ## Configuration
 
