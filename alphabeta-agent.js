@@ -1,5 +1,5 @@
 class AlphaBetaAgent {
-    constructor(my_token = 'x', depth = 4) {
+    constructor(my_token = 'x', depth = 7) {
         this.my_token = my_token;
         this.depth = depth;
     }
@@ -9,26 +9,6 @@ class AlphaBetaAgent {
             throw new AgentException('not my round');
         }
 
-        // Quick check: if there's an immediate winning move, make it
-        for (const move of connect4.possible_drops()) {
-            const new_connect4 = connect4.simulate_move(move);
-            if (new_connect4.wins === this.my_token) {
-                return move;
-            }
-        }
-
-        // Check if opponent has an immediate winning move and block it
-        const opp = this.get_opponent_token();
-        for (const move of connect4.possible_drops()) {
-            const afterOpponent = connect4.simulate_move(move);
-            if (afterOpponent.wins === opp) {
-                if (connect4.possible_drops().includes(move)) {
-                    return move;
-                }
-            }
-        }
-
-        // Normal alpha-beta search
         let best_score = -Infinity;
         let best_moves = [];
         let alpha = -Infinity;
@@ -46,15 +26,14 @@ class AlphaBetaAgent {
             }
         }
 
-        return best_moves[Math.floor(Math.random() * best_moves.length)];
+        // prefer central moves when tie
+		
+        const center = Math.floor(connect4.width / 2);
+        best_moves.sort((a, b) => Math.abs(center - a) - Math.abs(center - b));
+        return best_moves[0];
     }
 
     async alphabeta(connect4, depth, alpha, beta, is_maximizing) {
-        // Add small delay occasionally to prevent UI blocking
-        if (Math.random() < 0.001) {
-            await new Promise(resolve => setTimeout(resolve, 0));
-        }
-
         if (depth === 0 || connect4.game_over) {
             return this.evaluate(connect4);
         }
@@ -65,9 +44,7 @@ class AlphaBetaAgent {
                 const new_connect4 = connect4.simulate_move(move);
                 value = Math.max(value, await this.alphabeta(new_connect4, depth - 1, alpha, beta, false));
                 alpha = Math.max(alpha, value);
-                if (alpha >= beta) {
-                    break;
-                }
+                if (alpha >= beta) break; // beta cut-off
             }
             return value;
         } else {
@@ -76,45 +53,48 @@ class AlphaBetaAgent {
                 const new_connect4 = connect4.simulate_move(move);
                 value = Math.min(value, await this.alphabeta(new_connect4, depth - 1, alpha, beta, true));
                 beta = Math.min(beta, value);
-                if (alpha >= beta) {
-                    break;
-                }
+                if (alpha >= beta) break; // alpha cut-off
             }
             return value;
         }
     }
 
     evaluate(connect4) {
-        if (connect4.wins === this.my_token) {
-            return 10000;
-        } else if (connect4.wins !== null) {
-            return -10000;
-        }
+        const opp = this.get_opponent_token();
+
+        // terminal states
+        if (connect4.wins === this.my_token) return Infinity;
+        if (connect4.wins === opp) return -Infinity;
 
         let score = 0;
 
-        // Prefer center columns
-        //const center_array = connect4.center_column();
-        //score += center_array.filter(cell => cell === this.my_token).length * 3;
-		//uncomment if you want the ai to be better, the games will be more similar
-        // Evaluate all possible four-in-a-row sequences
-        for (const four of connect4.iter_fours()) {
-            const my_count = four.filter(cell => cell === this.my_token).length;
-            const opp_count = four.filter(cell => cell === this.get_opponent_token()).length;
-            const empty = four.filter(cell => cell === '_').length;
+        // center column control
+        const centerCol = Math.floor(connect4.width / 2);
+        const centerCount = connect4.board.map(row => row[centerCol])
+                                          .filter(cell => cell === this.my_token).length;
+        score += centerCount * 6;
 
-            if (my_count === 3 && empty === 1) {
-                score += 50;
-            } else if (my_count === 2 && empty === 2) {
-                score += 5;
-            } else if (opp_count === 3 && empty === 1) {
-                score -= 40;
-            } else if (opp_count === 2 && empty === 2) {
-                score -= 4;
-            }
+        // evaluate all fours using iter_fours
+        for (const four of connect4.iter_fours()) {
+            score += this._score_window(four, this.my_token, opp);
         }
 
         return score;
+    }
+
+    _score_window(window, me, opp) {
+        const my_count = window.filter(c => c === me).length;
+        const opp_count = window.filter(c => c === opp).length;
+        const empty = window.filter(c => c === '_').length;
+
+        if (my_count === 4) return 10000;
+        if (my_count === 3 && empty === 1) return 500;
+        if (my_count === 2 && empty === 2) return 50;
+
+        if (opp_count === 3 && empty === 1) return -5000;
+        if (opp_count === 2 && empty === 2) return -200;
+
+        return 0;
     }
 
     get_opponent_token() {
