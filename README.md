@@ -2,7 +2,7 @@
 
 A challenging twist on the classic Connect 4 game where you play simultaneously across 4 boards against an AI opponent. One mistake and you lose everything!
 
-## 🎮 Game Rules
+##  Game Rules
 
 - Play against an AI opponent across 4 different Connect 4 boards
 - After each of your moves, the game automatically switches to the next active board
@@ -11,7 +11,7 @@ A challenging twist on the classic Connect 4 game where you play simultaneously 
 - **Lose Condition**: Lose a single board and the entire game is over
 - The AI uses Alpha-Beta pruning algorithm with strategic evaluation
 
-## 🚀 Features
+##  Features
 
 - **4 Simultaneous Boards**: Manage multiple games at once
 - **Smart AI Opponent**: Uses Alpha-Beta pruning with depth-limited search
@@ -20,7 +20,7 @@ A challenging twist on the classic Connect 4 game where you play simultaneously 
 - **Strategic AI**: The AI evaluates center control, threats, and winning opportunities
 - **Responsive Design**: Works on desktop and mobile devices
 
-## 📋 How to Play
+##  How to Play
 
 1. Open `index.html` in a web browser
 2. Click on column buttons (1-7) or press keyboard keys (1-7) to drop your token (red)
@@ -34,7 +34,7 @@ A challenging twist on the classic Connect 4 game where you play simultaneously 
 - **Keyboard**: Press keys 1-7 to drop tokens in the corresponding column
 - **New Games**: Click the "New Games" button to restart
 
-## 🏗️ Project Structure
+##  Project Structure
 
 ```
 ├── index.html              # Main HTML file
@@ -44,7 +44,7 @@ A challenging twist on the classic Connect 4 game where you play simultaneously 
 └── multi-game-ui.js        # Multi-board UI and game management
 ```
 
-## 🧠 AI Strategy
+##  AI Strategy
 
 The AI uses several techniques to play competitively:
 
@@ -58,7 +58,7 @@ The AI uses several techniques to play competitively:
 - **Center Preference**: Prefers central moves when scores are equal
 - **Random First Move**: AI makes a random first move for variety
 
-## 🛠️ Technical Details
+##  Technical Details
 
 ### Core Classes
 
