@@ -8,7 +8,7 @@ A challenging browser-based Connect 4 game where you play simultaneously on four
 
 Multi Connect 4 puts a unique twist on the classic Connect 4 game. Instead of playing on a single board, you must manage four simultaneous games against an AI opponent. The catch? You lose immediately if the AI wins on ANY board, but you only win if you complete all four boards without losing.
 
-This creates a strategic challenge where you must balance offense and defense across multiple boards while the AI uses advanced decision-making algorithms to find your weaknesses.
+This creates a strategic challenge where you must balance offense and defense across multiple boards while the AI uses advanced decision-making algorithms.
 
 ## Features
 
