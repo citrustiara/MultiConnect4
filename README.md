@@ -1,116 +1,106 @@
 # Multi Connect 4
 
-A challenging twist on the classic Connect 4 game where you play simultaneously across 4 boards against an AI opponent. One mistake and you lose everything!
+A challenging browser-based Connect 4 game where you play simultaneously on four boards against an AI opponent using the Alpha-Beta pruning algorithm.
 
-##  Game Rules
+**Play online:** [multiconnect4.pages.dev](https://multiconnect4.pages.dev)
 
-- Play against an AI opponent across 4 different Connect 4 boards
-- After each of your moves, the game automatically switches to the next active board
-- The AI makes its move on each board after you do
-- **Win Condition**: Complete all 4 boards without losing any
-- **Lose Condition**: Lose a single board and the entire game is over
-- The AI uses Alpha-Beta pruning algorithm with strategic evaluation
+## About
 
-##  Features
+Multi Connect 4 puts a unique twist on the classic Connect 4 game. Instead of playing on a single board, you must manage four simultaneous games against an AI opponent. The catch? You lose immediately if the AI wins on ANY board, but you only win if you complete all four boards without losing.
 
-- **4 Simultaneous Boards**: Manage multiple games at once
-- **Smart AI Opponent**: Uses Alpha-Beta pruning with depth-limited search
-- **Keyboard Controls**: Press keys 1-7 to quickly drop tokens
-- **Visual Feedback**: Active board highlighting and move animations
-- **Strategic AI**: The AI evaluates center control, threats, and winning opportunities
+This creates a strategic challenge where you must balance offense and defense across multiple boards while the AI uses advanced decision-making algorithms to find your weaknesses.
+
+## Features
+
+- **Four Simultaneous Games**: Manage multiple Connect 4 boards at once
+- **AI Opponent**: Powered by Alpha-Beta pruning with minimax algorithm
+- **Keyboard Controls**: Press keys 1-7 to quickly drop tokens on the active board
+- **Visual Feedback**: Clear indication of which board is active and game status
 - **Responsive Design**: Works on desktop and mobile devices
+- **Instant Loss Condition**: Keeps you on your toes - one mistake costs everything
 
-##  How to Play
+## How to Play
 
-1. Open `index.html` in a web browser
-2. Click on column buttons (1-7) or press keyboard keys (1-7) to drop your token (red)
-3. The AI (yellow) will respond automatically
-4. The game cycles through boards after each player move
-5. Try to win all 4 boards without losing any!
+1. You play as red (O), the AI plays as yellow (X)
+2. The active board is highlighted with a green border
+3. Click column buttons or press keys 1-7 to drop your token
+4. After your move, the AI responds automatically
+5. The game cycles to the next active board after each turn
+6. **Win Condition**: Complete all four boards (win or tie) without losing any
+7. **Loss Condition**: AI wins on ANY single board
 
-### Controls
+## Technology
 
-- **Mouse**: Click column buttons above each board
-- **Keyboard**: Press keys 1-7 to drop tokens in the corresponding column
-- **New Games**: Click the "New Games" button to restart
+Built with vanilla JavaScript, this project demonstrates:
 
-##  Project Structure
+- **Alpha-Beta Pruning**: Efficient game tree search algorithm
+- **Minimax Algorithm**: Optimal decision-making for two-player games
+- **Heuristic Evaluation**: Position scoring based on potential winning patterns
+- **Clean Architecture**: Separation between game logic, AI, and UI
+
+## Project Structure
 
 ```
-├── index.html              # Main HTML file
-├── styles.css              # Game styling and animations
-├── connect4.js             # Core Connect 4 game logic
-├── alphabeta-agent.js      # AI agent with Alpha-Beta pruning
-└── multi-game-ui.js        # Multi-board UI and game management
+├── index.html              # Main HTML structure
+├── styles.css              # Styling and animations
+├── connect4.js             # Core game logic and rules
+├── alphabeta-agent.js      # AI implementation
+└── multi-game-ui.js        # User interface and game management
 ```
 
-##  AI Strategy
+## Key Components
 
-The AI uses several techniques to play competitively:
+### Connect4 Class
+Handles game state, move validation, and win detection. Includes:
+- Board representation and manipulation
+- Move simulation for AI planning
+- Win condition checking across all directions
+- Iterator for evaluating four-in-a-row patterns
 
-- **Alpha-Beta Pruning**: Efficient minimax search with pruning
-- **Position Evaluation**: Scores based on:
-  - Winning positions (instant win/loss)
-  - Three-in-a-row with empty space (strong threat)
-  - Two-in-a-row with two empty spaces (potential)
-  - Center column control (strategic advantage)
-- **Search Depth**: Configurable depth (default: 5 moves ahead)
-- **Center Preference**: Prefers central moves when scores are equal
-- **Random First Move**: AI makes a random first move for variety
+### AlphaBetaAgent Class
+Implements the AI opponent with:
+- Alpha-Beta pruning for efficient search
+- Configurable search depth
+- Position evaluation heuristics
+- Center column preference for tie-breaking
 
-##  Technical Details
+### Game Evaluation
+The AI evaluates positions based on:
+- Terminal states (wins/losses)
+- Center column control
+- Potential winning patterns (3-in-a-row, 2-in-a-row)
+- Defensive blocking of opponent threats
 
-### Core Classes
+## Local Development
 
-**Connect4**
-- Manages game state (7x6 board by default)
-- Handles token drops and move validation
-- Checks for wins and game-over conditions
-- Provides move simulation for AI planning
+Clone the repository and open `index.html` in a web browser:
 
-**AlphaBetaAgent**
-- Implements Alpha-Beta pruning algorithm
-- Evaluates board positions with scoring heuristics
-- Makes strategic decisions based on lookahead search
+```bash
+git clone https://github.com/yourusername/multi-connect4.git
+cd multi-connect4
+# Open index.html in your browser
+```
 
-### Key Features in Code
+No build process or dependencies required - it's pure vanilla JavaScript!
 
-- Generator functions for efficient four-in-a-row checking
-- Immutable game state simulation for AI planning
-- Event-driven UI updates
-- Keyboard event handling for quick gameplay
+## Configuration
 
-##  Customization
+You can adjust the AI difficulty by modifying the depth parameter in `multi-game-ui.js`:
 
-You can easily modify the game:
+```javascript
+agents.push(new AlphaBetaAgent('x', 5));  // Current depth: 5
+```
 
-- **AI Difficulty**: Change the `depth` parameter in `multi-game-ui.js` (line 10)
-  ```javascript
-  agents.push(new AlphaBetaAgent('x', 5)); // Change 5 to increase/decrease difficulty
-  ```
-- **Board Size**: Modify `width` and `height` in `Connect4` constructor
-- **Number of Boards**: Add/remove board sections in `index.html` and update the loop count in `multi-game-ui.js`
+Higher depth values make the AI stronger but slower. Depth 5 provides a good balance.
 
-##  Strategy Tips
+## Author
 
-- Control the center columns early
-- Watch for AI threats (three-in-a-row)
-- Block AI winning moves immediately
-- Build multiple threats simultaneously
-- Remember: you're playing 4 games at once - stay focused!
+**Maciej Łukasiewicz**
 
-##  License
+## License
 
 This project is open source and available under the MIT License.
 
-##  Contributing
+## Acknowledgments
 
-Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
-
-##  Author
-
-Created as a challenging variant of the classic Connect 4 game.
-
----
-
-**Good luck defeating the AI across all 4 boards!** 🎲
+Connect 4 (also known as Four in a Row) is a classic two-player connection game. This implementation adds a multi-board twist and features an AI opponent using classic game theory algorithms.
