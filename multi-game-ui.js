@@ -15,9 +15,9 @@ function initializeUI() {
 	aiLastMove = [];
     for (let i = 0; i < 4; i++) {
         games.push(new Connect4());
-        agents.push(new AlphaBetaAgent('x', 5));
+        agents.push(new AlphaBetaAgent('x', 4));
 		aiFirstMoveMade.push(false);
-		aiLastMove.push(null);
+		aiLastMove.push(false);
     }
     
     currentBoardIndex = 0;
@@ -262,7 +262,7 @@ async function makeMove(boardIndex, column) {
 				}
 				updateAllUI();
     }
-}, 50);
+}, 0);
 
     } catch (error) {
         console.error('Move error:', error);
@@ -278,9 +278,9 @@ function newGames() {
     
     for (let i = 0; i < 4; i++) {
         games.push(new Connect4());
-        agents.push(new AlphaBetaAgent('x', 5));
+        agents.push(new AlphaBetaAgent('x', 4));
 		aiFirstMoveMade.push(false);
-		aiLastMove.push(null);
+		aiLastMove.push(false);
 
     }
     
