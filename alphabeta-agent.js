@@ -13,6 +13,14 @@ class AlphaBetaAgent {
         let best_moves = [];
         let alpha = -Infinity;
         let beta = Infinity;
+		
+		for (const move of connect4.possible_drops()) {
+			const new_connect4 = connect4.simulate_move(move);
+			if (new_connect4.wins === this.my_token) {
+				return move; // immediate win, no need to search
+			}
+		}
+
 
         for (const move of connect4.possible_drops()) {
             const new_connect4 = connect4.simulate_move(move);
