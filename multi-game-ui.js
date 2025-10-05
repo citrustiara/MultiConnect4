@@ -17,7 +17,7 @@ function initializeUI() {
         games.push(new Connect4());
         agents.push(new AlphaBetaAgent('x', 4));
 		aiFirstMoveMade.push(false);
-		aiLastMove.push(false);
+		aiLastMove.push(null);
     }
     
     currentBoardIndex = 0;
@@ -280,7 +280,7 @@ function newGames() {
         games.push(new Connect4());
         agents.push(new AlphaBetaAgent('x', 4));
 		aiFirstMoveMade.push(false);
-		aiLastMove.push(false);
+		aiLastMove.push(null);
 
     }
     
