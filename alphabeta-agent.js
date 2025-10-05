@@ -13,18 +13,10 @@ class AlphaBetaAgent {
         let best_moves = [];
         let alpha = -Infinity;
         let beta = Infinity;
-		
-		for (const move of connect4.possible_drops()) {
-			const new_connect4 = connect4.simulate_move(move);
-			if (new_connect4.wins === this.my_token) {
-				return move; // immediate win, no need to search
-			}
-		}
-
 
         for (const move of connect4.possible_drops()) {
             const new_connect4 = connect4.simulate_move(move);
-            const score = await this.alphabeta(new_connect4, this.depth - 1, alpha, beta, false);
+            const score = await this.alphabeta(new_connect4, this.depth - 1, alpha, beta, true);
             if (score > best_score) {
                 best_score = score;
                 best_moves = [move];
@@ -42,7 +34,11 @@ class AlphaBetaAgent {
     }
 
     async alphabeta(connect4, depth, alpha, beta, is_maximizing) {
-        if (depth === 0 || connect4.game_over) {
+        
+		if (connect4.wins === this.my_token) return Infinity;
+        if (connect4.wins === opp) return -Infinity;
+		
+		if (depth === 0 || connect4.game_over) {
             return this.evaluate(connect4);
         }
 
@@ -94,8 +90,7 @@ class AlphaBetaAgent {
         const my_count = window.filter(c => c === me).length;
         const opp_count = window.filter(c => c === opp).length;
         const empty = window.filter(c => c === '_').length;
-
-        if (my_count === 4) return 10000;
+		
         if (my_count === 3 && empty === 1) return 500;
         if (my_count === 2 && empty === 2) return 50;
 
