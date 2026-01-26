@@ -2,12 +2,12 @@ class AlphaBetaAgent {
     constructor(my_token = 'x', depth = 7) {
         this.my_token = my_token;
         this.depth = depth;
-		this.nodes_visited = 0;
+        this.nodes_visited = 0;
     }
 
     async decide(connect4) {
-		this.nodes_visited = 0;
-		
+        this.nodes_visited = 0;
+
         if (connect4.who_moves !== this.my_token) {
             throw new AgentException('not my round');
         }
@@ -15,61 +15,41 @@ class AlphaBetaAgent {
         const moves = connect4.possible_drops();
         if (!moves || moves.length === 0) return null;
 
-        // immediate win -> take it
-        for (const move of moves) {
-            const s = connect4.simulate_move(move);
-            if (this.evaluate(s) === Infinity) return move;
-        }
-
-        // try to find a move that prevents any opponent immediate win after we play it
-        // (guaranteed block-in-one if such a move exists)
-        const safeMoves = [];
-        for (const move of moves) {
-            const s = connect4.simulate_move(move); // now opponent to move
-            let oppCanWin = false;
-            for (const oppMove of s.possible_drops()) { // double for loop, we simulate our move, then the opponent, if he wins we dont place the move in safemoves
-                const s2 = s.simulate_move(oppMove);
-                if (this.evaluate(s2) === -Infinity) { // opponent wins after our move
-                    oppCanWin = true;
-                    break;
-                }
-            }
-            if (!oppCanWin) safeMoves.push(move);
-        }
-        // If there's exactly one safe move (must-block), play it.
-        if (safeMoves.length === 1) return safeMoves[0];
-
-        // If there are safe moves, prefer searching only them (prunes hopeless moves),
-        // otherwise search all moves.
-        const rootMoves = safeMoves.length ? safeMoves : moves;
-
-        // standard alphabeta search over rootMoves.
+        // standard alphabeta search over all possible moves.
         let best_score = -Infinity;
         let best_moves = [];
-		let alpha = -Infinity;
-		let beta = Infinity;
-        for (const move of rootMoves) {
+        let alpha = -Infinity;
+        let beta = Infinity;
+
+        // Sort moves by center proximity for better alpha-beta pruning efficiency
+        // (heuristic: center moves are often better)
+        const center = Math.floor(connect4.width / 2);
+        moves.sort((a, b) => Math.abs(center - a) - Math.abs(center - b));
+
+        for (const move of moves) {
             const newState = connect4.simulate_move(move);
             const score = await this.alphabeta(newState, this.depth - 1, alpha, beta);
             if (score > best_score) {
                 best_score = score;
                 best_moves = [move];
-				alpha = Math.max(alpha, best_score);
+                alpha = Math.max(alpha, best_score);
             } else if (score === best_score) {
                 best_moves.push(move);
             }
         }
-		
-		console.log(`Nodes visited: ${this.nodes_visited}`);
 
-        // prefer center on ties
-        const center = Math.floor(connect4.width / 2);
+        console.log(`Nodes visited: ${this.nodes_visited}`);
+
+        // If multiple moves have the same best score, we already sorted them by center proximity
+        // so we can just pick the first one, or re-sort if we want to be explicit.
+        // The initial sort helps pruning, but let's explicitely sort the candidates again to be sure
+        // we pick the most central one among the best scores.
         best_moves.sort((a, b) => Math.abs(center - a) - Math.abs(center - b));
         return best_moves[0];
     }
 
     async alphabeta(connect4, depth, alpha, beta) {
-		this.nodes_visited++;
+        this.nodes_visited++;
         // terminal or depth 
         if (depth === 0 || connect4.game_over) {
             return this.evaluate(connect4);
@@ -119,7 +99,7 @@ class AlphaBetaAgent {
         // center control
         const centerCol = Math.floor(connect4.width / 2);
         const centerCount = connect4.board.map(row => row[centerCol])
-                                          .filter(cell => cell === this.my_token).length;
+            .filter(cell => cell === this.my_token).length;
         score += centerCount * 6;
 
         // window heuristics

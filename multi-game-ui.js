@@ -11,23 +11,23 @@ function initializeUI() {
     // Initialize 4 games
     games = [];
     agents = [];
-	aiFirstMoveMade = [];
-	aiLastMove = [];
+    aiFirstMoveMade = [];
+    aiLastMove = [];
     for (let i = 0; i < 4; i++) {
         games.push(new Connect4());
         agents.push(new AlphaBetaAgent('x', 4));
-		aiFirstMoveMade.push(false);
-		aiLastMove.push(false);
+        aiFirstMoveMade.push(false);
+        aiLastMove.push(false);
     }
-    
+
     currentBoardIndex = 0;
     gameOverAll = false;
-    
+
     // Create UI for all boards
     for (let boardIndex = 0; boardIndex < 4; boardIndex++) {
         createBoardUI(boardIndex);
     }
-    
+
     updateAllUI();
     setupKeyboardControls();
 }
@@ -36,7 +36,7 @@ function createBoardUI(boardIndex) {
     const game = games[boardIndex];
     const grid = document.getElementById(`grid-${boardIndex}`);
     const columnButtons = document.getElementById(`columnButtons-${boardIndex}`);
-    
+
     // Create column buttons
     columnButtons.innerHTML = '';
     for (let col = 0; col < game.width; col++) {
@@ -57,15 +57,15 @@ function createBoardUI(boardIndex) {
             grid.appendChild(cell);
         }
     }
-	let lastMoveElement = document.createElement('div');
-	lastMoveElement.id = `ai-lastmove-${boardIndex}`;
-	lastMoveElement.className = 'ai-lastmove';
-	lastMoveElement.textContent = 'Last move: -';
-	grid.parentNode.appendChild(lastMoveElement);
+    let lastMoveElement = document.createElement('div');
+    lastMoveElement.id = `ai-lastmove-${boardIndex}`;
+    lastMoveElement.className = 'ai-lastmove';
+    lastMoveElement.textContent = 'Last move: -';
+    grid.parentNode.appendChild(lastMoveElement);
 }
 
 function setupKeyboardControls() {
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         // Check if keys 1-7 are pressed
         const key = event.key;
         if (key >= '1' && key <= '7') {
@@ -90,13 +90,13 @@ function highlightButton(boardIndex, column) {
 
 function updateBoardUI(boardIndex) {
     const game = games[boardIndex];
-    
+
     // Update board display
     for (let row = 0; row < game.height; row++) {
         for (let col = 0; col < game.width; col++) {
             const cell = document.getElementById(`cell-${boardIndex}-${row}-${col}`);
             const value = game.board[row][col];
-            
+
             cell.className = 'cell';
             if (value === 'o') {
                 cell.className += ' player-o';
@@ -114,7 +114,7 @@ function updateBoardUI(boardIndex) {
     const columnButtons = document.querySelectorAll(`#columnButtons-${boardIndex} .column-btn`);
     const possibleMoves = game.possible_drops();
     const isCurrentBoard = boardIndex === currentBoardIndex;
-    
+
     columnButtons.forEach((btn, index) => {
         btn.disabled = !possibleMoves.includes(index) || game.game_over || isAiTurn || !isCurrentBoard || gameOverAll;
     });
@@ -122,17 +122,17 @@ function updateBoardUI(boardIndex) {
     // Update board appearance
     const boardElement = document.getElementById(`board-${boardIndex}`);
     const resultElement = document.getElementById(`result-${boardIndex}`);
-    
+
     if (game.game_over) {
         boardElement.className = 'board completed-board';
         if (game.wins === 'o') {
-            resultElement.textContent = '🎉 You Won!';
+            resultElement.textContent = 'You Won!';
             resultElement.className = 'board-result win';
         } else if (game.wins === 'x') {
             resultElement.textContent = '';
             resultElement.className = 'board-result lose';
         } else {
-            resultElement.textContent = '🤝 Tie Game!';
+            resultElement.textContent = 'Tie Game!';
             resultElement.className = 'board-result tie';
         }
     } else if (isCurrentBoard && !isAiTurn && !gameOverAll) {
@@ -144,14 +144,14 @@ function updateBoardUI(boardIndex) {
         resultElement.textContent = '';
         resultElement.className = 'board-result';
     }
-	// Update last AI move display
-	const lastMoveElement = document.getElementById(`ai-lastmove-${boardIndex}`);
-	if (lastMoveElement) {
-		lastMoveElement.textContent = 
-			aiLastMove[boardIndex] !== null 
-			? `Last AI move: ${aiLastMove[boardIndex]}` 
-			: 'Last AI move: -';
-}
+    // Update last AI move display
+    const lastMoveElement = document.getElementById(`ai-lastmove-${boardIndex}`);
+    if (lastMoveElement) {
+        lastMoveElement.textContent =
+            aiLastMove[boardIndex] !== null
+                ? `Last AI move: ${aiLastMove[boardIndex]}`
+                : 'Last AI move: -';
+    }
 
 }
 
@@ -163,7 +163,7 @@ function updateAllUI() {
 
     // Update main status
     const status = document.getElementById('status');
-    
+
     if (gameOverAll) {
         status.innerHTML = '<div class="game-over-message">GAME OVER - You lost!</div>';
     } else if (allGamesCompleted()) {
@@ -215,54 +215,54 @@ async function makeMove(boardIndex, column) {
         // AI move
         isAiTurn = true;
         updateAllUI();
-        
+
         setTimeout(async () => {
-			try {
-				let aiMove;
+            try {
+                let aiMove;
 
-				if (!aiFirstMoveMade[boardIndex]) {
-					// First AI move: choose randomly from valid columns
-					const possibleMoves = game.possible_drops();
-					if (possibleMoves.length > 0) {
-						aiMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-					} else {
-						// Shouldn't happen, but fallback
-						aiMove = 0;
-					}
-					aiFirstMoveMade[boardIndex] = true; // Mark first move as done
-				} else {
-					// Normal Alpha-Beta decision
-					aiMove = await agent.decide(game);
-				}
+                if (!aiFirstMoveMade[boardIndex]) {
+                    // First AI move: choose randomly from valid columns
+                    const possibleMoves = game.possible_drops();
+                    if (possibleMoves.length > 0) {
+                        aiMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                    } else {
+                        // Shouldn't happen, but fallback
+                        aiMove = 0;
+                    }
+                    aiFirstMoveMade[boardIndex] = true; // Mark first move as done
+                } else {
+                    // Normal Alpha-Beta decision
+                    aiMove = await agent.decide(game);
+                }
 
-				game.drop_token(aiMove);
-				aiLastMove[boardIndex] = aiMove + 1;
-				updateBoardUI(boardIndex);
-        
-				if (game.game_over && game.wins === 'x') {
-					gameOverAll = true;
-					isAiTurn = false;
-					updateAllUI();
-					return;
-				}
-        
-				isAiTurn = false;
-				const nextBoard = findNextActiveBoard();
-				if (nextBoard !== -1) {
-					currentBoardIndex = nextBoard;
-				}
-        
-				updateAllUI();
-			} catch (error) {
-				console.error('AI move error:', error);
-				isAiTurn = false;
-				const nextBoard = findNextActiveBoard();
-				if (nextBoard !== -1) {
-					currentBoardIndex = nextBoard;
-				}
-				updateAllUI();
-    }
-}, 0);
+                game.drop_token(aiMove);
+                aiLastMove[boardIndex] = aiMove + 1;
+                updateBoardUI(boardIndex);
+
+                if (game.game_over && game.wins === 'x') {
+                    gameOverAll = true;
+                    isAiTurn = false;
+                    updateAllUI();
+                    return;
+                }
+
+                isAiTurn = false;
+                const nextBoard = findNextActiveBoard();
+                if (nextBoard !== -1) {
+                    currentBoardIndex = nextBoard;
+                }
+
+                updateAllUI();
+            } catch (error) {
+                console.error('AI move error:', error);
+                isAiTurn = false;
+                const nextBoard = findNextActiveBoard();
+                if (nextBoard !== -1) {
+                    currentBoardIndex = nextBoard;
+                }
+                updateAllUI();
+            }
+        }, 0);
 
     } catch (error) {
         console.error('Move error:', error);
@@ -273,21 +273,21 @@ function newGames() {
     // Reset all games
     games = [];
     agents = [];
-	aiFirstMoveMade = [];
-	aiLastMove = [];
-    
+    aiFirstMoveMade = [];
+    aiLastMove = [];
+
     for (let i = 0; i < 4; i++) {
         games.push(new Connect4());
         agents.push(new AlphaBetaAgent('x', 4));
-		aiFirstMoveMade.push(false);
-		aiLastMove.push(false);
+        aiFirstMoveMade.push(false);
+        aiLastMove.push(false);
 
     }
-    
+
     currentBoardIndex = 0;
     isAiTurn = false;
     gameOverAll = false;
-    
+
     updateAllUI();
 }
 
