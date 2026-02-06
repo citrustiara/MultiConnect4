@@ -91,10 +91,6 @@ Higher depth values make the AI stronger but slower. Depth 5 provides a good bal
 
 **Maciej Łukasiewicz**
 
-## License
-
-This project is open source and available under the MIT License.
-
 ## Acknowledgments
 
 Connect 4 (also known as Four in a Row) is a classic two-player connection game. This implementation adds a multi-board twist and features an AI opponent using classic game theory algorithms.
